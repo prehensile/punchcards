@@ -390,7 +390,7 @@ def main():
 
         try:
             card = PunchCard(image,  bright=options.bright, debug=options.display, xstart=options.xstart, xstop=options.xstop, ystart=options.ystart, ystop=options.ystop, xadjust=options.xadjust, card_metrics=metrics )
-        except TypeError as e:
+        except TypeError:
             import traceback
             traceback.print_exc()
             print( "This usually happens if the input image is not grayscale; perhaps it's RGB? This script only works with grayscale images." )
