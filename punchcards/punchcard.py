@@ -388,8 +388,14 @@ def main():
             metrics.side_margin_ratio = options.side_margin_ratio
         metrics.calculate()
 
-        card = PunchCard(image,  bright=options.bright, debug=options.display, xstart=options.xstart, xstop=options.xstop, ystart=options.ystart, ystop=options.ystop, xadjust=options.xadjust, card_metrics=metrics )
-        
+        try:
+            card = PunchCard(image,  bright=options.bright, debug=options.display, xstart=options.xstart, xstop=options.xstop, ystart=options.ystart, ystop=options.ystop, xadjust=options.xadjust, card_metrics=metrics )
+        except TypeError as e:
+            import traceback
+            traceback.print_exc()
+            print( "This usually happens if the input image is not grayscale; perhaps it's RGB? This script only works with grayscale images." )
+            exit()
+
         if(options.dumpsimple):
             card.dump_simple()
         if (options.dump):
