@@ -345,8 +345,13 @@ class PunchCard(object):
         print('`' + '-' * self.card_metrics.columns + "'")
         print(' ' + '123456789-' * int(self.card_metrics.columns/10))
         print('')
-    
 
+    # Simple dump of card holes
+    def dump_simple( self ):
+        for rnum in range(len(self.decoded[0])):
+            for col in self.decoded:
+                sys.stdout.write( '1' if col[rnum] == 'O' else '0')
+            sys.stdout.write( "\n" )
     # simple shim for python 2/3 compatibility
     def _input( self, prompt ):
         try:
@@ -370,6 +375,7 @@ def main():
     parser.add_option('-a', '--adjust-x', type='int', dest='xadjust', default=0, help='Adjust middle edge detect location (pixels)')
     parser.add_option('-s', '--side-margin-ratio', type='float', dest='side_margin_ratio', default=0, help='Manually set side margin ratio (sideMargin/cardWidth).')
     parser.add_option('-w', '--row-height', type='float', dest='row_height', default=0, help='Manually set row height (inches)')
+    parser.add_option('-u', '--dump-simple', action='store_true', dest='dumpsimple', help='Output simple text map of holes, where 1 is a hole and 0 is no hole.')
     (options, args) = parser.parse_args()
 
     for arg in args:
@@ -383,7 +389,9 @@ def main():
         metrics.calculate()
 
         card = PunchCard(image,  bright=options.bright, debug=options.display, xstart=options.xstart, xstop=options.xstop, ystart=options.ystart, ystop=options.ystop, xadjust=options.xadjust, card_metrics=metrics )
-        print(card.text)
+        
+        if(options.dumpsimple):
+            card.dump_simple()
         if (options.dump):
             card.dump(arg)
         if (options.dumpraw):
