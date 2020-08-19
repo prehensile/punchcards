@@ -158,7 +158,7 @@ class PunchCard(object):
     def _find_threshold_brightness(self):
         left = self._brightness(self.pix[self.xmin, self.midy])
         right = self._brightness(self.pix[self.xmax - 1, self.midy])
-        return min(left, right, self.BRIGHTNESS_THRESHOLD) - 10
+        return min(left, right, BRIGHTNESS_THRESHOLD) - 10
         vals = []
         last = 0
         for x in range(self.xmin,self.xmax):
