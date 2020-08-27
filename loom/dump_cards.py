@@ -34,7 +34,8 @@ for fn_image in glob.glob( pth_images ):
     pth_image = os.path.join( pth_images, fn_image )
 
     # construct punchcard script arguments for this image
-    this_args = script_args
+    # use a copy of script_args so we don't accumulate file names with each run
+    this_args = list(script_args) 
     this_args.append( pth_image )
     
     # run the script and hold the output in card_dump
