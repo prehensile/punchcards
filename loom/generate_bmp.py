@@ -11,7 +11,8 @@ from PIL import Image
 # if PRINT_DEBUG is set to True, this script will print a whole load of debug info while generating image
 PRINT_DEBUG = False
 def log_message( msg ):
-    print( msg ) 
+    if PRINT_DEBUG:
+        print( msg ) 
 
 # define a function that rotates a 2d array by 90°
 # see https://stackoverflow.com/questions/41290350/inplace-rotation-of-a-matrix
@@ -47,11 +48,12 @@ image_out = Image.new( "1", (image_width,image_height) )
 num_textfiles = len( all_textfiles )
 for num_textfile, fn_textfile in enumerate(all_textfiles):
 
+    progress = num_textfile+1
     print( "Processing file: {} ({:d} of {:d}, {:0.0f}%)".format(
         fn_textfile,
-        num_textfile+1,
+        progress,
         num_textfiles,
-        (num_textfile/num_textfiles) * 100
+        (progress/num_textfiles) * 100
     ))
     
     # construct path to textfile
