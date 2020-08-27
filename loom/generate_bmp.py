@@ -8,6 +8,11 @@ import glob
 from PIL import Image
 
 
+# if PRINT_DEBUG is set to True, this script will print a whole load of debug info while generating image
+PRINT_DEBUG = False
+def log_message( msg ):
+    print( msg ) 
+
 # define a function that rotates a 2d array by 90°
 # see https://stackoverflow.com/questions/41290350/inplace-rotation-of-a-matrix
 # we'll use this to rotate the card data before outputting to an image line
@@ -40,40 +45,41 @@ image_out = Image.new( "1", (image_width,image_height) )
 
 # step through all textfiles in the given path
 num_textfiles = len( all_textfiles )
-for row, fn_textfile in enumerate(all_textfiles):
+for num_textfile, fn_textfile in enumerate(all_textfiles):
 
     print( "Processing file: {} ({:d} of {:d}, {:0.0f}%)".format(
         fn_textfile,
-        row+1,
+        num_textfile+1,
         num_textfiles,
-        (row/num_textfiles) * 100
+        (num_textfile/num_textfiles) * 100
     ))
     
     # construct path to textfile
     pth_textfile = os.path.join( pth_textfiles, fn_textfile )
     
     # read contents of textfile
-    rows = None
+    holes = None
     with open(pth_textfile) as fp:
-        rows = fp.read()
+        holes = fp.readlines()
     
     # rotate hole data through 90°
-    # print( rows )
-    rows = [ list(row) for row in rows.splitlines() ]
-    rows = rotate_matrix( rows )
-    #print( "\n".join([ "".join(row) for row in rows]) )
+    log_message( holes )
+    holes = [ list(row.strip()) for row in holes ]
+    holes = rotate_matrix( holes )
+    log_message( "\n".join([ "".join(row) for row in holes]) )
+
+    # collapse hole matrix down to one line
+    holes = "".join(  [ "".join(row) for row in holes] )
+    log_message( holes )
     
-    # write rows to image
+    # write holes to image
     # TODO: there is almost certainly a more efficient way to do this ¯\_(ツ)_/¯
-    for y, row in enumerate(rows):
-        for x, hole in enumerate(row):
+    for x, hole in enumerate(holes):
 
-            # convert "1" or "0" to 1 or 0
-            pixel = int(hole)  
+        # convert "1" or "0" to 1 or 0
+        # invert hole data so that a 1 in the data (hole) gives us 0 in the image (black pixel)
+        pixel = 1 if hole == "0" else 0 
 
-            # invert hole data so that a 1 in the data (hole) gives us 0 in the image (black pixel)
-            pixel = 1 if pixel == 0 else 0 
-
-            image_out.putpixel( (x,y), pixel )
+        image_out.putpixel( (x,num_textfile), pixel )
 
 image_out.save( fn_bmp )
